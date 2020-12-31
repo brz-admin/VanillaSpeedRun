@@ -1,10 +1,10 @@
 # VanillaSpeedRun
-"AutoChronometer" addon for **WoW 1.12** (*English and French client Only*)
+Authomatic Chronometer addon for **WoW 1.12** (*English and French client Only*)
 
-Author : Brz
+Author : Brz  
 Version 1.0.0
 
-When you enter one of the supported instances it automatically detect your first mob kill and start a chronometer at this point.
+When you enter one of the supported instances it automatically detect your first mob kill and start a chronometer at this point.  
 Then it will record time of death of every boss you do, and compare it to the previous time you did. Lowest timer get recorded.
 
 
