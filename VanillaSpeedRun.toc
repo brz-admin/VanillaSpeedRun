@@ -1,0 +1,8 @@
+## Interface: 11200
+## Title: Vanilla Speed Run - |cFFFF8080-Brz-|r
+## Notes: Automatic Chronometer for Vanilla Raid speed running
+## SavedVariablesPerCharacter: 
+## SavedVariables: VSR
+
+VanillaSpeedRun.lua
+VanillaSpeedRun.xml
