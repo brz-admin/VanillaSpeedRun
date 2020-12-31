@@ -1,5 +1,7 @@
 ## Interface: 11200
 ## Title: Vanilla Speed Run - |cFFFF8080-Brz-|r
+## Author: Brz
+## Version: 1.0.0
 ## Notes: Automatic Chronometer for Vanilla Raid speed running
 ## SavedVariablesPerCharacter: 
 ## SavedVariables: VSR
