@@ -18,12 +18,12 @@ function VSR_AQ40:OnInitialize()
 
 	if (VSR[zone] == nil) then
 		VSR[zone] = {
-			['best']      = nil,
-			[boss["The Prophet Skeram"]]           = nil,
-			[boss["Battleguard Sartura"]]           = nil,
-			[boss["Fankriss the Unyielding"]]           = nil,
-			[boss["Princess Huhuran"]]           = nil,
-			[boss["C'Thun"]]           = nil,
+			['best'] 							= nil,
+			[boss["The Prophet Skeram"]] 		= nil,
+			[boss["Battleguard Sartura"]]       = nil,
+			[boss["Fankriss the Unyielding"]]   = nil,
+			[boss["Princess Huhuran"]]          = nil,
+			[boss["C'Thun"]]           			= nil,
 		}
 	end
 
@@ -39,12 +39,12 @@ end
 function VSR_AQ40:OnEnable()
 	self:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH", "mobDeath")
 	VSR_AQ40:InitialiseRecord(zone, VSR[zone], boss["C'Thun"], {
-		[1]           = boss["The Prophet Skeram"],
-		[2]           = boss["Battleguard Sartura"],
-		[3]           = boss["Fankriss the Unyielding"],
-		[4]           = boss["Princess Huhuran"],
-		[5]           = boss["The Twin Emperors"],
-		[6] 		  = boss["C'Thun"],
+		[boss["The Prophet Skeram"]] 		= true,
+		[boss["Battleguard Sartura"]] 		= true,
+		[boss["Fankriss the Unyielding"]] 	= true,
+		[boss["Princess Huhuran"]] 			= true,
+		[boss["The Twin Emperors"]] 		= true,
+		[boss["C'Thun"]]				 	= true,
 	}, {
 		[L["Obsidian Eradicator"]] = true
 	}, 6);

@@ -252,7 +252,7 @@ function VanillaSpeedRun.modulePrototype:InitialiseRecord(zone, varPath, lastBos
             self.core.VSR_SEGMENTS_seg[key]:SetPoint("LEFT", "VSR_SEGMENTS", 5, -0);
             self.core.VSR_SEGMENTS_seg[key]:SetJustifyH("LEFT");
             self.core.VSR_SEGMENTS_seg[key]:SetFont("Fonts\\FRIZQT__.TTF", 8)
-            self.core.VSR_SEGMENTS_seg[key]:SetText(value);
+            self.core.VSR_SEGMENTS_seg[key]:SetText(key);
 
             self.core.VSR_SEGMENTS_tim[key]:SetPoint("RIGHT", "VSR_SEGMENTS", -5, -0);
             self.core.VSR_SEGMENTS_tim[key]:SetJustifyH("RIGHT");
