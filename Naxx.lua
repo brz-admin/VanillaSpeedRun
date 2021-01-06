@@ -110,13 +110,25 @@ function VSR_Naxx:UpdateWings(msg)
 end
 
 function VSR_Naxx:CustomMobDeath(msg)
+  
+  if dkRecording then
 	for hm,_ in pairs(hmDown) do
 		if (msg == string.format(UNITDIESOTHER, hm)) then
 			hmDown[hm] = true;
 		end
 	end
 	
-	
+	if hmDown[L["Highlord Mograine"]] and hmDown[L["Lady Blaumeux"]] and hmDown[L["Thane Korth'azz"]] and hmDown[L["Sir Zeliek"]] then
+	  self:genericBossDeath(string.format(UNITDIESOTHER, boss["The Four Horsemen"]));
+	  self.dkRecording = false;
+	  -- TODO save it...
+	end
+	else
+	  -- seek for firstmob death
+	 end
+  
+  -- implement wings record start end and save here
+  
 end
 
 function VSR_Naxx:OnEnable()
