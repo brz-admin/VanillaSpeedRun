@@ -109,6 +109,24 @@ function VSR_Naxx:UpdateWings(msg)
 
 end
 
+function VSR_Naxx:HandleWingsEnd(locale, timer)
+      	if (VSR[zone][locale] ~= nil) then
+    			if (VSR[zone][locale] > timer) then
+    				local diff = VSR[zone][locale] -  timer;
+    				VSR_SEGMENTS_tim[locale]:SetText(SecondsToClock(timer)..' (-'..STC_MIN(diff)..')');
+    				VSR_SEGMENTS_tim[locale]:SetTextColor(0.45, 0.90, 0.45, 1);
+    				VSR[zone][locale] =  timer;
+    			else 
+    				local diff =   timer - VSR[zone][locale];
+    				VSR_SEGMENTS_tim[locale]:SetText(SecondsToClock(timer)..' (+'..STC_MIN(diff)..')');
+    				VSR_SEGMENTS_tim[locale]:SetTextColor(0.90, 0.45, 0.45, 1);
+    			end
+    		else 
+    			VSR_SEGMENTS_tim[locale]:SetText(SecondsToClock(timer));
+    			VSR[zone][locale] = timer;
+    		end
+end
+
 function VSR_Naxx:CustomMobDeath(msg)
   
   if dkRecording then
@@ -121,27 +139,24 @@ function VSR_Naxx:CustomMobDeath(msg)
 	if hmDown[L["Highlord Mograine"]] and hmDown[L["Lady Blaumeux"]] and hmDown[L["Thane Korth'azz"]] and hmDown[L["Sir Zeliek"]] then
 		self:genericBossDeath(string.format(UNITDIESOTHER, boss["The Four Horsemen"]));
 		self.dkRecording = false;
-	  	if (VSR[zone][boss["The Four Horsemen"]] ~= nil) then
-			if (VSR[zone][boss["The Four Horsemen"]] > self.dkTimer) then
-				local diff = VSR[zone][boss["The Four Horsemen"]] -  self.dkTimer;
-				VSR_SEGMENTS_tim[boss["The Four Horsemen"]]:SetText(SecondsToClock(self.dkTimer)..' (-'..STC_MIN(diff)..')');
-				VSR_SEGMENTS_tim[boss["The Four Horsemen"]]:SetTextColor(0.45, 0.90, 0.45, 1);
-				VSR[zone][boss["The Four Horsemen"]] =  self.dkTimer;
-			else 
-				local diff =   self.dkTimer - VSR[zone][boss["The Four Horsemen"]];
-				VSR_SEGMENTS_tim[boss["The Four Horsemen"]]:SetText(SecondsToClock(self.dkTimer)..' (+'..STC_MIN(diff)..')');
-				VSR_SEGMENTS_tim[boss["The Four Horsemen"]]:SetTextColor(0.90, 0.45, 0.45, 1);
-			end
-		else 
-			VSR_SEGMENTS_tim[boss["The Four Horsemen"]]:SetText(SecondsToClock(self.dkTimer));
-			VSR[zone][boss["The Four Horsemen"]] = self.dkTimer;
-		end
+	    HandleWingsEnd(L["|cFF73c5e6DeathKnight Wing|r"], self.dkTimer);
 	end
 	else
 		for mob,_ in pairs(dkStart) do
-			
+			if (msg == string.format(UNITDIESOTHER, mob)) then
+			    self.dkRecording = true;
+			end
 		end
+    end
+
+    if not self.aboRecording then
+    	if (msg == string.format(UNITDIESOTHER, L["Patchwork Golem"])) then
+        	self.aboRecording = true;
+    	end
+    elseif (msg == string.format(UNITDIESOTHER, boss["Thaddius"])) then
+    	self.aboRecording = false;
 	end
+        
   
   -- implement wings record start end and save here
   
