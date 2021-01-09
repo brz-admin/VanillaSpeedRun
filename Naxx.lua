@@ -119,13 +119,29 @@ function VSR_Naxx:CustomMobDeath(msg)
 	end
 	
 	if hmDown[L["Highlord Mograine"]] and hmDown[L["Lady Blaumeux"]] and hmDown[L["Thane Korth'azz"]] and hmDown[L["Sir Zeliek"]] then
-	  self:genericBossDeath(string.format(UNITDIESOTHER, boss["The Four Horsemen"]));
-	  self.dkRecording = false;
-	  -- TODO save it...
+		self:genericBossDeath(string.format(UNITDIESOTHER, boss["The Four Horsemen"]));
+		self.dkRecording = false;
+	  	if (VSR[zone][boss["The Four Horsemen"]] ~= nil) then
+			if (VSR[zone][boss["The Four Horsemen"]] > self.dkTimer) then
+				local diff = VSR[zone][boss["The Four Horsemen"]] -  self.dkTimer;
+				VSR_SEGMENTS_tim[boss["The Four Horsemen"]]:SetText(SecondsToClock(self.dkTimer)..' (-'..STC_MIN(diff)..')');
+				VSR_SEGMENTS_tim[boss["The Four Horsemen"]]:SetTextColor(0.45, 0.90, 0.45, 1);
+				VSR[zone][boss["The Four Horsemen"]] =  self.dkTimer;
+			else 
+				local diff =   self.dkTimer - VSR[zone][boss["The Four Horsemen"]];
+				VSR_SEGMENTS_tim[boss["The Four Horsemen"]]:SetText(SecondsToClock(self.dkTimer)..' (+'..STC_MIN(diff)..')');
+				VSR_SEGMENTS_tim[boss["The Four Horsemen"]]:SetTextColor(0.90, 0.45, 0.45, 1);
+			end
+		else 
+			VSR_SEGMENTS_tim[boss["The Four Horsemen"]]:SetText(SecondsToClock(self.dkTimer));
+			VSR[zone][boss["The Four Horsemen"]] = self.dkTimer;
+		end
 	end
 	else
-	  -- seek for firstmob death
-	 end
+		for mob,_ in pairs(dkStart) do
+			
+		end
+	end
   
   -- implement wings record start end and save here
   
@@ -134,26 +150,26 @@ end
 function VSR_Naxx:OnEnable()
 	self:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH", "mobDeath")
 	VSR_Naxx:InitialiseRecord(zone, VSR[zone], boss["Kel'Thuzad"], {
-		[L["|cFF73c5e6Construction Quarter|r"]] 	= true,
-		[boss["Patchwerk"]]							= true,
-		[boss["Grobbulus"]]							= true,
-		[boss["Gluth"]]								= true,
-		[boss["Thaddius"]]							= true,
-		[L["|cFF73c5e6DeathKnight Wing|r"]]			= true,
-		[boss["Instructor Razuvious"]]				= true,
-		[boss["Gothik the Harvester"]]				= true,
-		[boss["The Four Horsemen"]]					= true,
-		[L["|cFF73c5e6Plague Wing|r"]]				= true,
-		[L["|cFF73c5e6Plague Wing|r"]]				= true,
-		[boss["Noth the Plaguebringer"]]			= true,
-		[boss["Heigan the Unclean"]]				= true,
-		[boss["Loatheb"]]							= true,
-		[L["|cFF73c5e6Spider Wing|r"]]				= true,
-		[boss["Anub'Rekhan"]]						= true,
-		[boss["Grand Widow Faerlina"]]				= true,
-		[boss["Maexxna"]]							= true,
-		[boss["Sapphiron"]]							= true,
-		[boss["Kel'Thuzad"]]						= true,
+		[0] = L["|cFF73c5e6Construction Quarter|r"],
+		[1] = boss["Patchwerk"],
+		[2] = boss["Grobbulus"],
+		[3] = boss["Gluth"],
+		[4] = boss["Thaddius"],
+		[5] = L["|cFF73c5e6DeathKnight Wing|r"],
+		[6] = boss["Instructor Razuvious"],
+		[7] = boss["Gothik the Harvester"],
+		[8] = boss["The Four Horsemen"],
+		[9] = L["|cFF73c5e6Plague Wing|r"],
+		[10] = L["|cFF73c5e6Plague Wing|r"],
+		[11] = boss["Noth the Plaguebringer"],
+		[12] = boss["Heigan the Unclean"],
+		[13] = boss["Loatheb"],
+		[14] = L["|cFF73c5e6Spider Wing|r"],
+		[15] = boss["Anub'Rekhan"],
+		[16] = boss["Grand Widow Faerlina"]]	,
+		[17] = boss["Maexxna"],
+		[18] = boss["Sapphiron"],
+		[19] = boss["Kel'Thuzad"],
 	}, {
 		[L["Death Knight"]]							= true,
 		[L["Risen Deathknight"]]					= true,

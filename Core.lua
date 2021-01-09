@@ -240,26 +240,26 @@ function VanillaSpeedRun.modulePrototype:InitialiseRecord(zone, varPath, lastBos
     for key, value in instStruct do
         if (key ~= "lastBoss") then
             count = count +1;
-            self.core.VSR_SEGMENTS_seg[key] = self.core.VSR_SEGMENTS:CreateFontString("VSR_SEGMENTS_Seg"..key, "ARTWORK", "GameFontWhite");
-			self.core. VSR_SEGMENTS_tim[key] = self.core.VSR_SEGMENTS:CreateFontString("VSR_SEGMENTS_tim"..key, "ARTWORK", "GameFontWhite");
+            self.core.VSR_SEGMENTS_seg[value] = self.core.VSR_SEGMENTS:CreateFontString("VSR_SEGMENTS_Seg"..value, "ARTWORK", "GameFontWhite");
+			self.core. VSR_SEGMENTS_tim[value] = self.core.VSR_SEGMENTS:CreateFontString("VSR_SEGMENTS_tim"..value, "ARTWORK", "GameFontWhite");
             if (lastKey ~= nil) then 
-                self.core.VSR_SEGMENTS_seg[key]:SetPoint("TOP", "VSR_SEGMENTS_Seg"..lastKey, "BOTTOM", 0, -0);
-                self.core.VSR_SEGMENTS_tim[key]:SetPoint("TOP", "VSR_SEGMENTS_tim"..lastKey, "BOTTOM", 0, -0);
+                self.core.VSR_SEGMENTS_seg[value]:SetPoint("TOP", "VSR_SEGMENTS_Seg"..lastvalue, "BOTTOM", 0, -0);
+                self.core.VSR_SEGMENTS_tim[value]:SetPoint("TOP", "VSR_SEGMENTS_tim"..lastvalue, "BOTTOM", 0, -0);
             else 
-                self.core.VSR_SEGMENTS_seg[key]:SetPoint("TOP", "VSR_SEGMENTS", 0, -10);
-                self.core.VSR_SEGMENTS_tim[key]:SetPoint("TOP", "VSR_SEGMENTS", 0, -10);
+                self.core.VSR_SEGMENTS_seg[value]:SetPoint("TOP", "VSR_SEGMENTS", 0, -10);
+                self.core.VSR_SEGMENTS_tim[value]:SetPoint("TOP", "VSR_SEGMENTS", 0, -10);
             end
-            self.core.VSR_SEGMENTS_seg[key]:SetPoint("LEFT", "VSR_SEGMENTS", 5, -0);
-            self.core.VSR_SEGMENTS_seg[key]:SetJustifyH("LEFT");
-            self.core.VSR_SEGMENTS_seg[key]:SetFont("Fonts\\FRIZQT__.TTF", 8)
-            self.core.VSR_SEGMENTS_seg[key]:SetText(key);
+            self.core.VSR_SEGMENTS_seg[value]:SetPoint("LEFT", "VSR_SEGMENTS", 5, -0);
+            self.core.VSR_SEGMENTS_seg[value]:SetJustifyH("LEFT");
+            self.core.VSR_SEGMENTS_seg[value]:SetFont("Fonts\\FRIZQT__.TTF", 8)
+            self.core.VSR_SEGMENTS_seg[value]:SetText(value);
 
-            self.core.VSR_SEGMENTS_tim[key]:SetPoint("RIGHT", "VSR_SEGMENTS", -5, -0);
-            self.core.VSR_SEGMENTS_tim[key]:SetJustifyH("RIGHT");
-            self.core.VSR_SEGMENTS_tim[key]:SetFont("Fonts\\FRIZQT__.TTF", 8)
-            self.core.VSR_SEGMENTS_tim[key]:SetText("none");
-            if (varPath[key] ~= nil) then
-                self.core.VSR_SEGMENTS_tim[key]:SetText(SecondsToClock(varPath[key]));
+            self.core.VSR_SEGMENTS_tim[value]:SetPoint("RIGHT", "VSR_SEGMENTS", -5, -0);
+            self.core.VSR_SEGMENTS_tim[value]:SetJustifyH("RIGHT");
+            self.core.VSR_SEGMENTS_tim[value]:SetFont("Fonts\\FRIZQT__.TTF", 8)
+            self.core.VSR_SEGMENTS_tim[value]:SetText("none");
+            if (varPath[vlue] ~= nil) then
+                self.core.VSR_SEGMENTS_tim[value]:SetText(SecondsToClock(varPath[value]));
             end
             lastKey = key;
         end
@@ -299,21 +299,21 @@ function VanillaSpeedRun.modulePrototype:genericBossDeath(msg)
 		if (msg == string.format(UNITDIESOTHER, boss)) then
 			self.core.bossdwn = self.core.bossdwn +1;
 			self.core.SaveCurrent();
-			if (self.core.varPath[key] ~= nil) then
-				local oldRecord = self.core.varPath[key];
+			if (self.core.varPath[boss] ~= nil) then
+				local oldRecord = self.core.varPath[boss];
 				if (oldRecord > self.core.timer) then
 					local diff = oldRecord-self.core.timer;
-					self.core.VSR_SEGMENTS_tim[key]:SetText(SecondsToClock(self.core.timer).." (-"..STC_MIN(diff)..')');
-					self.core.VSR_SEGMENTS_tim[key]:SetTextColor(0.45, 0.90, 0.45, 1);
-					self.core.varPath[key] = self.core.timer;
+					self.core.VSR_SEGMENTS_tim[boss]:SetText(SecondsToClock(self.core.timer).." (-"..STC_MIN(diff)..')');
+					self.core.VSR_SEGMENTS_tim[boss]:SetTextColor(0.45, 0.90, 0.45, 1);
+					self.core.varPath[boss] = self.core.timer;
 				else 
 					local diff = self.core.timer-oldRecord;
-					self.core.VSR_SEGMENTS_tim[key]:SetText(SecondsToClock(self.core.timer).." (+"..STC_MIN(diff)..')');
-					self.core.VSR_SEGMENTS_tim[key]:SetTextColor(0.90, 0.45, 0.45, 1);
+					self.core.VSR_SEGMENTS_tim[boss]:SetText(SecondsToClock(self.core.timer).." (+"..STC_MIN(diff)..')');
+					self.core.VSR_SEGMENTS_tim[boss]:SetTextColor(0.90, 0.45, 0.45, 1);
 				end
 			else
-				self.core.VSR_SEGMENTS_tim[key]:SetText(SecondsToClock(self.core.timer));
-				self.core.varPath[key] = self.core.timer;
+				self.core.VSR_SEGMENTS_tim[boss]:SetText(SecondsToClock(self.core.timer));
+				self.core.varPath[boss] = self.core.timer;
 			end
 		end
 	end

@@ -26,8 +26,6 @@ function VSR_AQ40:OnInitialize()
 			[boss["C'Thun"]]           			= nil,
 		}
 	end
-
-	print(self.name.." INIT");
 end
 
 function VSR_AQ40:CustomMobDeath(msg)
@@ -39,12 +37,12 @@ end
 function VSR_AQ40:OnEnable()
 	self:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH", "mobDeath")
 	VSR_AQ40:InitialiseRecord(zone, VSR[zone], boss["C'Thun"], {
-		[boss["The Prophet Skeram"]] 		= true,
-		[boss["Battleguard Sartura"]] 		= true,
-		[boss["Fankriss the Unyielding"]] 	= true,
-		[boss["Princess Huhuran"]] 			= true,
-		[boss["The Twin Emperors"]] 		= true,
-		[boss["C'Thun"]]				 	= true,
+		[0] = boss["The Prophet Skeram"],
+		[1] = boss["Battleguard Sartura"],
+		[2] = boss["Fankriss the Unyielding"],
+		[3] = boss["Princess Huhuran"],
+		[4] = boss["The Twin Emperors"],
+		[5] = boss["C'Thun"],
 	}, {
 		[L["Obsidian Eradicator"]] = true
 	}, 6);
