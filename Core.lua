@@ -243,8 +243,8 @@ function VanillaSpeedRun.modulePrototype:InitialiseRecord(zone, varPath, lastBos
             self.core.VSR_SEGMENTS_seg[value] = self.core.VSR_SEGMENTS:CreateFontString("VSR_SEGMENTS_Seg"..value, "ARTWORK", "GameFontWhite");
 			self.core. VSR_SEGMENTS_tim[value] = self.core.VSR_SEGMENTS:CreateFontString("VSR_SEGMENTS_tim"..value, "ARTWORK", "GameFontWhite");
             if (lastKey ~= nil) then 
-                self.core.VSR_SEGMENTS_seg[value]:SetPoint("TOP", "VSR_SEGMENTS_Seg"..lastvalue, "BOTTOM", 0, -0);
-                self.core.VSR_SEGMENTS_tim[value]:SetPoint("TOP", "VSR_SEGMENTS_tim"..lastvalue, "BOTTOM", 0, -0);
+                self.core.VSR_SEGMENTS_seg[value]:SetPoint("TOP", "VSR_SEGMENTS_Seg"..lastKey, "BOTTOM", 0, -0);
+                self.core.VSR_SEGMENTS_tim[value]:SetPoint("TOP", "VSR_SEGMENTS_tim"..lastKey, "BOTTOM", 0, -0);
             else 
                 self.core.VSR_SEGMENTS_seg[value]:SetPoint("TOP", "VSR_SEGMENTS", 0, -10);
                 self.core.VSR_SEGMENTS_tim[value]:SetPoint("TOP", "VSR_SEGMENTS", 0, -10);
@@ -258,10 +258,10 @@ function VanillaSpeedRun.modulePrototype:InitialiseRecord(zone, varPath, lastBos
             self.core.VSR_SEGMENTS_tim[value]:SetJustifyH("RIGHT");
             self.core.VSR_SEGMENTS_tim[value]:SetFont("Fonts\\FRIZQT__.TTF", 8)
             self.core.VSR_SEGMENTS_tim[value]:SetText("none");
-            if (varPath[vlue] ~= nil) then
+            if (varPath[value] ~= nil) then
                 self.core.VSR_SEGMENTS_tim[value]:SetText(SecondsToClock(varPath[value]));
             end
-            lastKey = key;
+            lastKey = value;
         end
     end
     self.core.VSR_MAIN_FRAME:SetHeight(40 +(count * 10));

@@ -1,5 +1,5 @@
 
-local zone = AceLibrary("Babble-Zone-2.2")["Ahn'Qiraj"];
+local zone = AceLibrary("Babble-Zone-2.2")["Blackwing Lair"];
 local boss = AceLibrary("Babble-Boss-2.2");
 local L = AceLibrary("AceLocale-2.2"):new("VanillaSpeedRun"..zone);
 
