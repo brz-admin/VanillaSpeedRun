@@ -70,7 +70,45 @@ local hmDown = {
 	[boss["Lady Blaumeux"]] 	= false,
 	[boss["Sir Zeliek"]] 		= false,
 };
-local plagueTimer, plagueRecording, aboTimer, aboRecording, spiderTimer, spiderRecording, dkTimer, dkRecording = 0, false, 0, false, 0, false, 0, false;
+
+local NaxSpec = {
+	["plague"] = {
+		timer = 0,
+		recording = false,
+		startTime = nil,
+		firstMobs = {
+			[boss["Noth the Plaguebringer"]]			= true,
+			[L["Infectious Ghoul"]]						= true,
+			[L["Plague Slime"]]							= true,
+			[L["Stoneskin Gargoyle"]]					= true,
+		}
+	},
+	["construct"] = {
+		timer = 0,
+		recording = false,
+		startTime = nil,
+		firstMobs = {
+			[L["Patchwork Golem"]] = true
+		}
+	},
+	["spider"] = {
+		timer = 0,
+		recording = false,
+		startTime = nil,
+		firstMobs = {
+			[L["Patchwork Golem"]] = true
+		}
+	},
+	["deathknight"] = {
+		timer = 0,
+		recording = false,
+		startTime = nil,
+		firstMobs = {
+			[L["Patchwork Golem"]] = true
+		}
+	}
+}
+--Todo use theses
 
 VSR_Naxx = VanillaSpeedRun:NewModule(zone);
 
@@ -110,21 +148,21 @@ function VSR_Naxx:UpdateWings(msg)
 end
 
 function VSR_Naxx:HandleWingsEnd(locale, timer)
-      	if (VSR[zone][locale] ~= nil) then
-    			if (VSR[zone][locale] > timer) then
-    				local diff = VSR[zone][locale] -  timer;
-    				VSR_SEGMENTS_tim[locale]:SetText(SecondsToClock(timer)..' (-'..STC_MIN(diff)..')');
-    				VSR_SEGMENTS_tim[locale]:SetTextColor(0.45, 0.90, 0.45, 1);
-    				VSR[zone][locale] =  timer;
-    			else 
-    				local diff =   timer - VSR[zone][locale];
-    				VSR_SEGMENTS_tim[locale]:SetText(SecondsToClock(timer)..' (+'..STC_MIN(diff)..')');
-    				VSR_SEGMENTS_tim[locale]:SetTextColor(0.90, 0.45, 0.45, 1);
-    			end
-    		else 
-    			VSR_SEGMENTS_tim[locale]:SetText(SecondsToClock(timer));
-    			VSR[zone][locale] = timer;
-    		end
+	if (VSR[zone][locale] ~= nil) then
+		if (VSR[zone][locale] > timer) then
+			local diff = VSR[zone][locale] -  timer;
+			VSR_SEGMENTS_tim[locale]:SetText(SecondsToClock(timer)..' (-'..STC_MIN(diff)..')');
+			VSR_SEGMENTS_tim[locale]:SetTextColor(0.45, 0.90, 0.45, 1);
+			VSR[zone][locale] =  timer;
+		else 
+			local diff =   timer - VSR[zone][locale];
+			VSR_SEGMENTS_tim[locale]:SetText(SecondsToClock(timer)..' (+'..STC_MIN(diff)..')');
+			VSR_SEGMENTS_tim[locale]:SetTextColor(0.90, 0.45, 0.45, 1);
+		end
+	else 
+		VSR_SEGMENTS_tim[locale]:SetText(SecondsToClock(timer));
+		VSR[zone][locale] = timer;
+	end
 end
 
 function VSR_Naxx:CustomMobDeath(msg)
