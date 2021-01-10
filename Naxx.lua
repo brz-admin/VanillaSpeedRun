@@ -96,7 +96,10 @@ local NaxSpec = {
 		recording = false,
 		startTime = nil,
 		firstMobs = {
-			[L["Patchwork Golem"]] = true
+			[L["Poisonous Skitterer"]]					= true,
+			[L["Carrion Spinner"]]						= true,
+			[L["Dread Creeper"]]						= true,
+			[L["Venom Stalker"]]						= true,
 		}
 	},
 	["deathknight"] = {
@@ -104,7 +107,8 @@ local NaxSpec = {
 		recording = false,
 		startTime = nil,
 		firstMobs = {
-			[L["Patchwork Golem"]] = true
+			[L["Death Knight"]]							= true,
+			[L["Risen Deathknight"]]					= true,
 		}
 	}
 }
@@ -139,6 +143,10 @@ function VSR_Naxx:OnInitialize()
 			[boss["Kel'Thuzad"]]						= nil,
 		}
 	end
+	
+	if VSR["NaxxCurr"] == nil then
+	    VSR["NaxxCurr"] = NaxSpec;
+	end
 
 	print(self.name.." INIT");
 end
@@ -151,7 +159,7 @@ function VSR_Naxx:HandleWingsEnd(locale, timer)
 	if (VSR[zone][locale] ~= nil) then
 		if (VSR[zone][locale] > timer) then
 			local diff = VSR[zone][locale] -  timer;
-			VSR_SEGMENTS_tim[locale]:SetText(SecondsToClock(timer)..' (-'..STC_MIN(diff)..')');
+			VSR_SEGMENTS_tim[locale]:SetText(SecondsToClo(timer)..' (-'..STC_MIN(diff)..')');
 			VSR_SEGMENTS_tim[locale]:SetTextColor(0.45, 0.90, 0.45, 1);
 			VSR[zone][locale] =  timer;
 		else 
@@ -176,24 +184,34 @@ function VSR_Naxx:CustomMobDeath(msg)
 	
 	if hmDown[L["Highlord Mograine"]] and hmDown[L["Lady Blaumeux"]] and hmDown[L["Thane Korth'azz"]] and hmDown[L["Sir Zeliek"]] then
 		self:genericBossDeath(string.format(UNITDIESOTHER, boss["The Four Horsemen"]));
-		self.dkRecording = false;
-	    HandleWingsEnd(L["|cFF73c5e6DeathKnight Wing|r"], self.dkTimer);
+		NaxSpec["deathknight"]["recording"] = false;
+	    HandleWingsEnd(L["|cFF73c5e6DeathKnight Wing|r"], NaxSpec["deathknight"]["timer"]);
 	end
 	else
 		for mob,_ in pairs(dkStart) do
 			if (msg == string.format(UNITDIESOTHER, mob)) then
-			    self.dkRecording = true;
+	    		NaxSpec["deathknight"]["recording"] = true;
 			end
 		end
     end
 
-    if not self.aboRecording then
+    if not NaxSpec["construct"]["recording"] then
     	if (msg == string.format(UNITDIESOTHER, L["Patchwork Golem"])) then
-        	self.aboRecording = true;
+        	NaxSpec["construct"]["recording"] = true;
     	end
     elseif (msg == string.format(UNITDIESOTHER, boss["Thaddius"])) then
-    	self.aboRecording = false;
-	end
+    	NaxSpec["construct"]["recording"] = false;
+    end
+
+    for wing,_ in pairs(NaxSpec) do
+        if not wing.recording then
+            for mob,_ in pairs(wing.firstMobs) do
+                if (msg == string.format(UNITDIESOTHER, mob)) then
+                    wing.recording = true
+                end
+            end
+        end
+    end
         
   
   -- implement wings record start end and save here
@@ -219,7 +237,7 @@ function VSR_Naxx:OnEnable()
 		[13] = boss["Loatheb"],
 		[14] = L["|cFF73c5e6Spider Wing|r"],
 		[15] = boss["Anub'Rekhan"],
-		[16] = boss["Grand Widow Faerlina"]]	,
+		[16] = boss["Grand Widow Faerlina"],
 		[17] = boss["Maexxna"],
 		[18] = boss["Sapphiron"],
 		[19] = boss["Kel'Thuzad"],
@@ -235,5 +253,13 @@ function VSR_Naxx:OnEnable()
 		[L["Plague Slime"]]							= true,
 		[L["Stoneskin Gargoyle"]]					= true,
 	}, 15);
+	
+	for k,v in pairs(VSR["NaxxCurr"]) do
+	    if k["recording"] and (GetTime() - k["startTime"] < 6*60*60) then
+		    NaxSpec[k]["recording"] = true;
+		    NaxSpec[k]["startTime"] = k["startTime"];
+	    end
+	end
+	
 	self.core.VSR_MAIN_FRAME:SetScript("OnUpdate", function() self.Update() self.UpdateWings() end)
 end
