@@ -320,7 +320,7 @@ function VanillaSpeedRun.modulePrototype:genericBossDeath(msg)
 end
 
 function VanillaSpeedRun.modulePrototype:lastBossDeath(msg)
-	if self.core.recording and (msg == string.format(UNITDIESOTHER, self.core.lastBoss)) and (self.core.bossdwn == self.core.bossnbr) then
+	if self.core.recording and (msg == string.format(UNITDIESOTHER, self.core.lastBoss)) and (self.core.bossdwn >= self.core.bossnbr) then
 		self.core.recording = false;
 		if (self.core.varPath["best"] == nil) then 
 			self.core.varPath["best"] = self.core.timer;
