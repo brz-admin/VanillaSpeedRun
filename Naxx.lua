@@ -45,25 +45,6 @@ L:RegisterTranslations("frFR", function() return {
 	["Stoneskin Gargoyle"] = "Gargouille peau de pierre"
 } end)
 
-local plagueStart = {
-	[boss["Noth the Plaguebringer"]]			= true,
-	[L["Infectious Ghoul"]]						= true,
-	[L["Plague Slime"]]							= true,
-	[L["Stoneskin Gargoyle"]]					= true,
-};
-
-local dkStart = {
-	[L["Death Knight"]]							= true,
-	[L["Risen Deathknight"]]					= true,
-}
-
-local spiderStart = {
-	[L["Poisonous Skitterer"]]					= true,
-	[L["Carrion Spinner"]]						= true,
-	[L["Dread Creeper"]]						= true,
-	[L["Venom Stalker"]]						= true,
-}
-
 local hmDown = {
 	[boss["Highlord Mograine"]] = false,
 	[boss["Thane Korth'azz"]] 	= false,
@@ -72,7 +53,7 @@ local hmDown = {
 };
 
 local NaxSpec = {
-	["plague"] = {
+	[L["|cFF73c5e6Plague Wing|r"]] = {
 		timer = 0,
 		recording = false,
 		startTime = nil,
@@ -81,17 +62,19 @@ local NaxSpec = {
 			[L["Infectious Ghoul"]]						= true,
 			[L["Plague Slime"]]							= true,
 			[L["Stoneskin Gargoyle"]]					= true,
-		}
+		},
+		lastBoss = boss["Loatheb"]
 	},
-	["construct"] = {
+	[L["|cFF73c5e6Construction Quarter|r"]] = {
 		timer = 0,
 		recording = false,
 		startTime = nil,
 		firstMobs = {
 			[L["Patchwork Golem"]] = true
-		}
+		},
+		lastBoss = boss["Thaddius"]
 	},
-	["spider"] = {
+	[L["|cFF73c5e6Spider Wing|r"]] = {
 		timer = 0,
 		recording = false,
 		startTime = nil,
@@ -100,19 +83,20 @@ local NaxSpec = {
 			[L["Carrion Spinner"]]						= true,
 			[L["Dread Creeper"]]						= true,
 			[L["Venom Stalker"]]						= true,
-		}
+		},
+		lastBoss = boss["Maexxna"]
 	},
-	["deathknight"] = {
+	[L["|cFF73c5e6DeathKnight Wing|r"]] = {
 		timer = 0,
 		recording = false,
 		startTime = nil,
 		firstMobs = {
 			[L["Death Knight"]]							= true,
 			[L["Risen Deathknight"]]					= true,
-		}
+		},
+		lastBoss = boss["The Four Horsemen"];
 	}
 }
---Todo use theses
 
 VSR_Naxx = VanillaSpeedRun:NewModule(zone);
 
@@ -147,90 +131,91 @@ function VSR_Naxx:OnInitialize()
 	if VSR["NaxxCurr"] == nil then
 	    VSR["NaxxCurr"] = NaxSpec;
 	end
-
-	print(self.name.." INIT");
 end
 
 function VSR_Naxx:UpdateWings(msg)
-
+	for wing,_ in pairs(NaxSpec) do
+		if NaxSpec[wing].recording and NaxSpec[wing].startTime ~= nil then
+			NaxSpec[wing].timer = math.floor(GetTime())-NaxSpec[wing].startTime
+			if NaxSpec[wing].timer < 0 then
+				NaxSpec[wing].timer = 0
+			end
+			VanillaSpeedRun.VSR_SEGMENTS_tim[wing]:SetText(SecondsToClock(NaxSpec[wing].timer));
+			VanillaSpeedRun.VSR_SEGMENTS_tim[wing]:SetTextColor(0.90, 0.45, 0.45, 1);
+		end
+	end
 end
 
 function VSR_Naxx:HandleWingsEnd(locale, timer)
 	if (VSR[zone][locale] ~= nil) then
 		if (VSR[zone][locale] > timer) then
 			local diff = VSR[zone][locale] -  timer;
-			VSR_SEGMENTS_tim[locale]:SetText(SecondsToClo(timer)..' (-'..STC_MIN(diff)..')');
-			VSR_SEGMENTS_tim[locale]:SetTextColor(0.45, 0.90, 0.45, 1);
+			VanillaSpeedRun.VSR_SEGMENTS_tim[locale]:SetText(SecondsToClo(timer)..' (-'..STC_MIN(diff)..')');
+			VanillaSpeedRun.VSR_SEGMENTS_tim[locale]:SetTextColor(0.45, 0.90, 0.45, 1);
 			VSR[zone][locale] =  timer;
 		else 
 			local diff =   timer - VSR[zone][locale];
-			VSR_SEGMENTS_tim[locale]:SetText(SecondsToClock(timer)..' (+'..STC_MIN(diff)..')');
-			VSR_SEGMENTS_tim[locale]:SetTextColor(0.90, 0.45, 0.45, 1);
+			VanillaSpeedRun.VSR_SEGMENTS_tim[locale]:SetText(SecondsToClock(timer)..' (+'..STC_MIN(diff)..')');
+			VanillaSpeedRun.VSR_SEGMENTS_tim[locale]:SetTextColor(0.90, 0.45, 0.45, 1);
 		end
 	else 
-		VSR_SEGMENTS_tim[locale]:SetText(SecondsToClock(timer));
+		VanillaSpeedRun.VSR_SEGMENTS_tim[locale]:SetText(SecondsToClock(timer));
 		VSR[zone][locale] = timer;
 	end
 end
 
 function VSR_Naxx:CustomMobDeath(msg)
   
-  if dkRecording then
-	for hm,_ in pairs(hmDown) do
-		if (msg == string.format(UNITDIESOTHER, hm)) then
-			hmDown[hm] = true;
-		end
-	end
-	
-	if hmDown[L["Highlord Mograine"]] and hmDown[L["Lady Blaumeux"]] and hmDown[L["Thane Korth'azz"]] and hmDown[L["Sir Zeliek"]] then
-		self:genericBossDeath(string.format(UNITDIESOTHER, boss["The Four Horsemen"]));
-		NaxSpec["deathknight"]["recording"] = false;
-	    HandleWingsEnd(L["|cFF73c5e6DeathKnight Wing|r"], NaxSpec["deathknight"]["timer"]);
-	end
-	else
-		for mob,_ in pairs(dkStart) do
-			if (msg == string.format(UNITDIESOTHER, mob)) then
-	    		NaxSpec["deathknight"]["recording"] = true;
+  	if NaxSpec[L["|cFF73c5e6DeathKnight Wing|r"]].recording then
+		for hm,_ in pairs(hmDown) do
+			if (msg == string.format(UNITDIESOTHER, hm)) then
+				hmDown[hm] = true;
 			end
 		end
-    end
-
-    if not NaxSpec["construct"]["recording"] then
-    	if (msg == string.format(UNITDIESOTHER, L["Patchwork Golem"])) then
-        	NaxSpec["construct"]["recording"] = true;
-    	end
-    elseif (msg == string.format(UNITDIESOTHER, boss["Thaddius"])) then
-    	NaxSpec["construct"]["recording"] = false;
-    end
+		
+		if hmDown[boss["Highlord Mograine"]] and hmDown[boss["Lady Blaumeux"]] and hmDown[boss["Thane Korth'azz"]] and hmDown[boss["Sir Zeliek"]] then
+			self:genericBossDeath(string.format(UNITDIESOTHER, boss["The Four Horsemen"]));
+			NaxSpec[L["|cFF73c5e6DeathKnight Wing|r"]]["recording"] = false;
+			self:HandleWingsEnd(L["|cFF73c5e6DeathKnight Wing|r"], NaxSpec[L["|cFF73c5e6DeathKnight Wing|r"]]["timer"]);
+		end
+	end
 
     for wing,_ in pairs(NaxSpec) do
-        if not wing.recording then
-            for mob,_ in pairs(wing.firstMobs) do
+        if not NaxSpec[wing].recording then
+            for mob,_ in pairs(NaxSpec[wing].firstMobs) do
                 if (msg == string.format(UNITDIESOTHER, mob)) then
-                    wing.recording = true
+					NaxSpec[wing].recording = true;
+					NaxSpec[wing].startTime = math.floor(GetTime());
                 end
-            end
+			end
+		else
+			if (msg == string.format(UNITDIESOTHER, NaxSpec[wing].lastBoss)) then
+				NaxSpec[wing].recording = false;
+				self:HandleWingsEnd(wing, NaxSpec[wing].timer);
+			end
         end
-    end
-        
-  
-  -- implement wings record start end and save here
-  
+	end
+
+	for k,_ in pairs(VSR["NaxxCurr"]) do
+		VSR.NaxxCurr[k].recording = NaxSpec[k].recording;
+		VSR.NaxxCurr[k].startTime = NaxSpec[k].startTime;
+	end
+	
 end
 
 function VSR_Naxx:OnEnable()
 	self:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH", "mobDeath")
+
 	VSR_Naxx:InitialiseRecord(zone, VSR[zone], boss["Kel'Thuzad"], {
-		[0] = L["|cFF73c5e6Construction Quarter|r"],
-		[1] = boss["Patchwerk"],
-		[2] = boss["Grobbulus"],
-		[3] = boss["Gluth"],
-		[4] = boss["Thaddius"],
-		[5] = L["|cFF73c5e6DeathKnight Wing|r"],
-		[6] = boss["Instructor Razuvious"],
-		[7] = boss["Gothik the Harvester"],
-		[8] = boss["The Four Horsemen"],
-		[9] = L["|cFF73c5e6Plague Wing|r"],
+		[1] = L["|cFF73c5e6Construction Quarter|r"],
+		[2] = boss["Patchwerk"],
+		[3] = boss["Grobbulus"],
+		[4] = boss["Gluth"],
+		[5] = boss["Thaddius"],
+		[6] = L["|cFF73c5e6DeathKnight Wing|r"],
+		[7] = boss["Instructor Razuvious"],
+		[8] = boss["Gothik the Harvester"],
+		[9] = boss["The Four Horsemen"],
 		[10] = L["|cFF73c5e6Plague Wing|r"],
 		[11] = boss["Noth the Plaguebringer"],
 		[12] = boss["Heigan the Unclean"],
@@ -254,10 +239,10 @@ function VSR_Naxx:OnEnable()
 		[L["Stoneskin Gargoyle"]]					= true,
 	}, 15);
 	
-	for k,v in pairs(VSR["NaxxCurr"]) do
-	    if k["recording"] and (GetTime() - k["startTime"] < 6*60*60) then
+	for k,_ in pairs(VSR["NaxxCurr"]) do
+	    if VSR["NaxxCurr"][k]["recording"] and (GetTime() - VSR["NaxxCurr"][k]["startTime"] < 6*60*60) then
 		    NaxSpec[k]["recording"] = true;
-		    NaxSpec[k]["startTime"] = k["startTime"];
+		    NaxSpec[k]["startTime"] = VSR["NaxxCurr"][k]["startTime"];
 	    end
 	end
 	

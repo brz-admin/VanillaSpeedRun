@@ -242,7 +242,7 @@ function VanillaSpeedRun.modulePrototype:InitialiseRecord(zone, varPath, lastBos
             count = count +1;
             self.core.VSR_SEGMENTS_seg[value] = self.core.VSR_SEGMENTS:CreateFontString("VSR_SEGMENTS_Seg"..value, "ARTWORK", "GameFontWhite");
 			self.core. VSR_SEGMENTS_tim[value] = self.core.VSR_SEGMENTS:CreateFontString("VSR_SEGMENTS_tim"..value, "ARTWORK", "GameFontWhite");
-            if (lastKey ~= nil) then 
+			if (lastKey ~= nil) then 
                 self.core.VSR_SEGMENTS_seg[value]:SetPoint("TOP", "VSR_SEGMENTS_Seg"..lastKey, "BOTTOM", 0, -0);
                 self.core.VSR_SEGMENTS_tim[value]:SetPoint("TOP", "VSR_SEGMENTS_tim"..lastKey, "BOTTOM", 0, -0);
             else 
@@ -261,10 +261,10 @@ function VanillaSpeedRun.modulePrototype:InitialiseRecord(zone, varPath, lastBos
             if (varPath[value] ~= nil) then
                 self.core.VSR_SEGMENTS_tim[value]:SetText(SecondsToClock(varPath[value]));
             end
-            lastKey = value;
+			lastKey = value;
         end
     end
-    self.core.VSR_MAIN_FRAME:SetHeight(40 +(count * 10));
+    self.core.VSR_MAIN_FRAME:SetHeight(40 +(count * 9));
     self.core.timer = 0;
 end
 
@@ -373,6 +373,7 @@ function VanillaSpeedRun:RegisterModule(name, module)
 		print(string.format("%q is already registered.", name))
 		return
 	end
+	print(string.format("%q loaded.", name));
 
 	module.registered = true
 	if module.OnRegister and type(module.OnRegister) == "function" then

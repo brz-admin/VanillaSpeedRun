@@ -29,5 +29,7 @@ Libs\Babble-Zone-2.2\Babble-Zone-2.2.lua
 
 Core.lua
 
+MC.lua
+BWL.lua
 AQ40.lua
 Naxx.lua
