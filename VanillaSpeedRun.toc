@@ -1,10 +1,35 @@
 ## Interface: 11200
-## Title: Vanilla Speed Run - |cFFFF8080-Brz-|r
+## Title: VanillaSpeedRun by |cFFFF8080Brz|r |cff7fff7f-Ace2-|r 
 ## Author: Brz
-## Version: 1.0.0
+## Version: 2.0.0
 ## Notes: Automatic Chronometer for Vanilla Raid speed running
-## SavedVariablesPerCharacter: 
+## SavedVariablesPerCharacter: VSRoptions
 ## SavedVariables: VSR
 
-VanillaSpeedRun.lua
-VanillaSpeedRun.xml
+## OptionalDeps: Ace2, Babble-2.2
+## X-Embeds: Ace2, Babble-2.2
+
+Libs\AceLibrary\AceLibrary.lua
+
+Libs\Compost-2.0\Compost-2.0.lua
+
+Libs\AceOO-2.0\AceOO-2.0.lua
+Libs\AceAddon-2.0\AceAddon-2.0.lua
+Libs\AceConsole-2.0\AceConsole-2.0.lua
+Libs\AceHook-2.1\AceHook-2.1.lua
+Libs\AceHook-2.0\AceHook-2.0.lua
+Libs\AceDB-2.0\AceDB-2.0.lua
+Libs\AceDebug-2.0\AceDebug-2.0.lua
+Libs\AceEvent-2.0\AceEvent-2.0.lua
+Libs\AceLocale-2.2\AceLocale-2.2.lua
+Libs\AceModuleCore-2.0\AceModuleCore-2.0.lua
+
+Libs\Babble-Boss-2.2\Babble-Boss-2.2.lua
+Libs\Babble-Zone-2.2\Babble-Zone-2.2.lua
+
+Core.lua
+
+MC.lua
+BWL.lua
+AQ40.lua
+Naxx.lua
