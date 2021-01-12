@@ -7,19 +7,27 @@ L:RegisterTranslations("enUS", function() return {
 	newRec = "New Record for %s !! Done in %s, -%s from the old one !",
 	recRemains = "%s done in %s, +%s from the best record !",
 	list = "Records list",
-	listDesc = "Shows a list of all records",
+	listDesc = "Shows a list of all best records",
 	move = "Move Frame",
-	moveDesc = "Move the timers frame"
+	moveDesc = "Move the timers frame",
+	show = "Show/Hide the Frame",
+	nuke = "Empty the best timers list",
+	nukeInst = "Erase every records from %s",
+	nukedInst = "Records vor %s have been erased."
 } end);
 
 L:RegisterTranslations("frFR", function() return {
 	firstRec = "Premier enregistrement pour %s : %s.",
 	newRec = "Nouveau record pour %s !! Faites en %s, -%s par rapport a l'ancien",
 	recRemains = "%s fait en %s, +%s par rapport au meilleur record !",
-	list = "Records list",
-	listDesc = "Shows a list of all records",
-	move = "Move Frame",
-	moveDesc = "Move the timers frame"
+	list = "Liste des records",
+	listDesc = "Montre la liste de tous les meilleurs temps",
+	move = "Bouger la fenêtre",
+	moveDesc = "Bouge la fenêtre des timers",
+	show = "Montrer/cacher la fenêtre",
+	nuke = "Vider la liste des meilleurs temps",
+	nukeInst = "Efface tous les enregistrements de %s",
+	nukedInst = "Les enregistrements pour %s ont été éffacés.",
 } end);
 
 VanillaSpeedRun = AceLibrary("AceAddon-2.0"):new("AceConsole-2.0", "AceEvent-2.0", "AceModuleCore-2.0");
@@ -37,6 +45,7 @@ VanillaSpeedRun.bossnbr = nil;
 VanillaSpeedRun.varPath = nil;
 VanillaSpeedRun.move = false;
 
+local nukeList = {}
 
 local slashOptions = {
 	type = 'group',
@@ -46,7 +55,6 @@ local slashOptions = {
 			name=L["list"],
 			desc=L["listDesc"],
 			func = function() VanillaSpeedRun:list() end
-
 		},
 		move = {
 			type='toggle',
@@ -54,6 +62,13 @@ local slashOptions = {
 			desc=L["moveDesc"],
 			get = function() return VanillaSpeedRun.move end,
 			set = function() MakeMovable(VanillaSpeedRun.VSR_MAIN_FRAME); end,
+		},
+		show = {
+			type="toggle",
+			name=L["show"],
+			desc=L["show"],
+			get = function() return VSR_MAIN_FRAME:IsVisible(); end,
+			set = function() if VSR_MAIN_FRAME:IsVisible() then VSR_MAIN_FRAME:Hide(); VSRoptions.show = false; else VSR_MAIN_FRAME:Show(); VSRoptions.show = true; end end,
 		},
 	}
 }
@@ -73,7 +88,12 @@ function VanillaSpeedRun:initFrames()
 	self.VSR_MAIN_FRAME:EnableMouse(true);
 	self.VSR_MAIN_FRAME:SetPoint(VSRoptions["point"], VSRoptions["xOfs"], VSRoptions["yOfs"]);
 	self.VSR_MAIN_FRAME:SetScale(VSRoptions["scale"])
-	self.VSR_MAIN_FRAME:Show();
+
+	if (VSRoptions.show) then
+		self.VSR_MAIN_FRAME:Show();
+	else
+		self.VSR_MAIN_FRAME:Hide();
+	end
 
 	self.VSR_TITLE = CreateFrame("Frame", "VSR_TITLE", self.VSR_MAIN_FRAME);
 	self.VSR_TITLE:SetPoint("TOP", "VSR_MAIN_FRAME", 0, -0);
@@ -178,13 +198,20 @@ end
 
 function VanillaSpeedRun:list()
 	for zone,array in pairs(VSR) do
-		if zone ~= "currentInst" then
-			time = SecondsToClock(array["best"]) or "none";
-			print(string.format("%s : %s", zone, time));
+		if zone ~= "currentInst" and zone ~= "NaxxCurr" then
+			print(string.format("%s :", zone));
+			for boss, time in pairs(array) do
+				local timer = SecondsToClock(time);
+				print(string.format("- %s : %s", boss, timer));
+			end
 		end
 	end
 end
 
+function VanillaSpeedRun:nuke(zoneName)
+	VSR[zoneName] = nil;
+	print(L[nukedInst], zoneName);
+end
 ---------------
 VanillaSpeedRun.modulePrototype.core = VanillaSpeedRun;
 
@@ -238,31 +265,29 @@ function VanillaSpeedRun.modulePrototype:InitialiseRecord(zone, varPath, lastBos
 	
 	local count = 0;
     for key, value in instStruct do
-        if (key ~= "lastBoss") then
-            count = count +1;
-            self.core.VSR_SEGMENTS_seg[value] = self.core.VSR_SEGMENTS:CreateFontString("VSR_SEGMENTS_Seg"..value, "ARTWORK", "GameFontWhite");
-			self.core. VSR_SEGMENTS_tim[value] = self.core.VSR_SEGMENTS:CreateFontString("VSR_SEGMENTS_tim"..value, "ARTWORK", "GameFontWhite");
-			if (lastKey ~= nil) then 
-                self.core.VSR_SEGMENTS_seg[value]:SetPoint("TOP", "VSR_SEGMENTS_Seg"..lastKey, "BOTTOM", 0, -0);
-                self.core.VSR_SEGMENTS_tim[value]:SetPoint("TOP", "VSR_SEGMENTS_tim"..lastKey, "BOTTOM", 0, -0);
-            else 
-                self.core.VSR_SEGMENTS_seg[value]:SetPoint("TOP", "VSR_SEGMENTS", 0, -10);
-                self.core.VSR_SEGMENTS_tim[value]:SetPoint("TOP", "VSR_SEGMENTS", 0, -10);
-            end
-            self.core.VSR_SEGMENTS_seg[value]:SetPoint("LEFT", "VSR_SEGMENTS", 5, -0);
-            self.core.VSR_SEGMENTS_seg[value]:SetJustifyH("LEFT");
-            self.core.VSR_SEGMENTS_seg[value]:SetFont("Fonts\\FRIZQT__.TTF", 8)
-            self.core.VSR_SEGMENTS_seg[value]:SetText(value);
+		count = count +1;
+		self.core.VSR_SEGMENTS_seg[value] = self.core.VSR_SEGMENTS:CreateFontString("VSR_SEGMENTS_Seg"..value, "ARTWORK", "GameFontWhite");
+		self.core. VSR_SEGMENTS_tim[value] = self.core.VSR_SEGMENTS:CreateFontString("VSR_SEGMENTS_tim"..value, "ARTWORK", "GameFontWhite");
+		if (lastKey ~= nil) then 
+			self.core.VSR_SEGMENTS_seg[value]:SetPoint("TOP", "VSR_SEGMENTS_Seg"..lastKey, "BOTTOM", 0, -0);
+			self.core.VSR_SEGMENTS_tim[value]:SetPoint("TOP", "VSR_SEGMENTS_tim"..lastKey, "BOTTOM", 0, -0);
+		else 
+			self.core.VSR_SEGMENTS_seg[value]:SetPoint("TOP", "VSR_SEGMENTS", 0, -10);
+			self.core.VSR_SEGMENTS_tim[value]:SetPoint("TOP", "VSR_SEGMENTS", 0, -10);
+		end
+		self.core.VSR_SEGMENTS_seg[value]:SetPoint("LEFT", "VSR_SEGMENTS", 5, -0);
+		self.core.VSR_SEGMENTS_seg[value]:SetJustifyH("LEFT");
+		self.core.VSR_SEGMENTS_seg[value]:SetFont("Fonts\\FRIZQT__.TTF", 8)
+		self.core.VSR_SEGMENTS_seg[value]:SetText(value);
 
-            self.core.VSR_SEGMENTS_tim[value]:SetPoint("RIGHT", "VSR_SEGMENTS", -5, -0);
-            self.core.VSR_SEGMENTS_tim[value]:SetJustifyH("RIGHT");
-            self.core.VSR_SEGMENTS_tim[value]:SetFont("Fonts\\FRIZQT__.TTF", 8)
-            self.core.VSR_SEGMENTS_tim[value]:SetText("none");
-            if (varPath[value] ~= nil) then
-                self.core.VSR_SEGMENTS_tim[value]:SetText(SecondsToClock(varPath[value]));
-            end
-			lastKey = value;
-        end
+		self.core.VSR_SEGMENTS_tim[value]:SetPoint("RIGHT", "VSR_SEGMENTS", -5, -0);
+		self.core.VSR_SEGMENTS_tim[value]:SetJustifyH("RIGHT");
+		self.core.VSR_SEGMENTS_tim[value]:SetFont("Fonts\\FRIZQT__.TTF", 8)
+		self.core.VSR_SEGMENTS_tim[value]:SetText(" ");
+		if (varPath[value] ~= nil) then
+			self.core.VSR_SEGMENTS_tim[value]:SetText(SecondsToClock(varPath[value]));
+		end
+		lastKey = value;
     end
     self.core.VSR_MAIN_FRAME:SetHeight(40 +(count * 9));
     self.core.timer = 0;
@@ -402,6 +427,7 @@ function VanillaSpeedRun:OnInitialize()
 			["yOfs"] = 0,
 			["scale"] = 1,
 			["alpha"] = 0.5,
+			["show"] = true,
 		};
 
 	end
